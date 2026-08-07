@@ -159,22 +159,26 @@
   "payment": {
     "protocol": "x402",
     "summary": "Pay in USDC on Base or Solana — your client picks the rail.",
+    "note": "Facilitators are per-rail — no public facilitator settles both chains.",
     "rails": [
       {
         "rail": "evm",
         "network": "base-sepolia",
         "mainnet": "base",
         "asset": "USDC",
-        "payTo": "0x40252CFDF8B20Ed757D61ff157719F33Ec332402"
+        "payTo": "0x40252CFDF8B20Ed757D61ff157719F33Ec332402",
+        "facilitator": "https://x402.org/facilitator",
+        "signing": "EIP-3009 transferWithAuthorization"
       },
       {
         "rail": "solana",
         "network": "solana",
         "devnet": "solana-devnet",
         "asset": "USDC",
-        "payTo": "WwwuGbqHrwF5RG89KhUbmRWEvjnRH9k5kVM5p7T3WwW"
+        "payTo": "WwwuGbqHrwF5RG89KhUbmRWEvjnRH9k5kVM5p7T3WwW",
+        "facilitator": "https://facilitator.payai.network",
+        "signing": "SPL transferChecked"
       }
-    ],
-    "facilitator": "https://x402.org/facilitator"
+    ]
   }
 }
