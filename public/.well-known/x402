@@ -1,0 +1,180 @@
+{
+  "x402Version": 1,
+  "name": "x402-classes",
+  "description": "Class and session booking server — fitness studios and workshop hosts sell seats per-class via x402",
+  "resources": [
+    {
+      "resource": "POST /enroll/:classId",
+      "description": "Enroll in one class session. classId is <templateId>@<YYYY-MM-DD> (e.g. vinyasa-am@2026-08-10) — read GET /schedule (free) for valid ids and live seat counts. Body: {name, email?}. Returns the assigned seat number, full class details, a base64 ICS calendar invite, and a signed QR pass (token + verifyUrl + SVG data URI) — all in the 200 response.",
+      "price": "$0.05",
+      "network": "base-sepolia",
+      "asset": "USDC",
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "passId": {
+            "type": "string"
+          },
+          "seatNumber": {
+            "type": "number"
+          },
+          "classDetails": {
+            "type": "object",
+            "properties": {
+              "classId": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "instructor": {
+                "type": "string"
+              },
+              "room": {
+                "type": "string"
+              },
+              "date": {
+                "type": "string"
+              },
+              "time": {
+                "type": "string"
+              },
+              "endsAt": {
+                "type": "string"
+              },
+              "durationMinutes": {
+                "type": "number"
+              },
+              "startsAt": {
+                "type": "string"
+              },
+              "studio": {
+                "type": "string"
+              },
+              "address": {
+                "type": "string"
+              }
+            }
+          },
+          "holder": {
+            "type": "object"
+          },
+          "seatsLeftAfter": {
+            "type": "number"
+          },
+          "passPolicy": {
+            "type": "object"
+          },
+          "pass": {
+            "type": "object",
+            "properties": {
+              "token": {
+                "type": "string",
+                "description": "base64url(payload).hexHMAC — the ticket"
+              },
+              "verifyUrl": {
+                "type": "string"
+              },
+              "verifyEndpoint": {
+                "type": "string"
+              },
+              "expiresAt": {
+                "type": "string"
+              },
+              "qrSvgDataUri": {
+                "type": "string",
+                "description": "QR code as an SVG data URI"
+              }
+            }
+          },
+          "ics": {
+            "type": "string",
+            "description": "base64-encoded RFC 5545 calendar invite"
+          },
+          "issuedAt": {
+            "type": "string"
+          },
+          "signature": {
+            "type": "string",
+            "description": "HMAC-SHA256 over canonical JSON"
+          }
+        }
+      },
+      "networks": [
+        "base-sepolia",
+        "solana"
+      ],
+      "accepts": [
+        {
+          "scheme": "exact",
+          "network": "base-sepolia",
+          "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+          "assetSymbol": "USDC",
+          "payTo": "0x40252CFDF8B20Ed757D61ff157719F33Ec332402",
+          "maxAmountRequired": "50000",
+          "mimeType": "application/json"
+        },
+        {
+          "scheme": "exact",
+          "network": "solana",
+          "asset": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+          "assetSymbol": "USDC",
+          "payTo": "WwwuGbqHrwF5RG89KhUbmRWEvjnRH9k5kVM5p7T3WwW",
+          "maxAmountRequired": "50000",
+          "mimeType": "application/json"
+        }
+      ]
+    }
+  ],
+  "freeResources": [
+    {
+      "resource": "GET /schedule",
+      "description": "The class calendar with live seat counts. Free by design — the schedule is the shop window, the seat is the product. Filter with ?class=ID&date=YYYY-MM-DD&days=N."
+    },
+    {
+      "resource": "GET /classes/:classId",
+      "description": "One session with live capacity, seatsTaken, seatsLeft and enrollmentOpen"
+    },
+    {
+      "resource": "GET /roster/:classId",
+      "description": "Seats sold for a session: seat number, holder name, check-in status"
+    },
+    {
+      "resource": "GET /verify/:token",
+      "description": "Validate a QR pass. 200 {valid:true, payload, status, session} or 400 {valid:false, reason}."
+    },
+    {
+      "resource": "POST /check-in/:token",
+      "description": "Validate and mark a pass as used at the door. Re-scans report alreadyCheckedIn."
+    },
+    {
+      "resource": "GET /info",
+      "description": "Studio profile, pass policy, prices, payment rails"
+    },
+    {
+      "resource": "GET /health",
+      "description": "Liveness check"
+    }
+  ],
+  "payment": {
+    "protocol": "x402",
+    "summary": "Pay in USDC on Base or Solana — your client picks the rail.",
+    "rails": [
+      {
+        "rail": "evm",
+        "network": "base-sepolia",
+        "mainnet": "base",
+        "asset": "USDC",
+        "payTo": "0x40252CFDF8B20Ed757D61ff157719F33Ec332402"
+      },
+      {
+        "rail": "solana",
+        "network": "solana",
+        "devnet": "solana-devnet",
+        "asset": "USDC",
+        "payTo": "WwwuGbqHrwF5RG89KhUbmRWEvjnRH9k5kVM5p7T3WwW"
+      }
+    ],
+    "facilitator": "https://x402.org/facilitator"
+  }
+}

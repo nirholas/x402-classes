@@ -1,0 +1,707 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "x402-classes",
+    "version": "0.1.0",
+    "description": "Class and session booking server — fitness studios and workshop hosts sell seats per-class via x402. The schedule is free; a seat costs $0.05 and the payment returns the seat number, class details, ICS invite and a signed QR pass in the 200 body. The paid route responds 402 with dual-rail PaymentRequirements (USDC on Base and on Solana) until an X-PAYMENT header carrying a signed payment is supplied.",
+    "contact": {
+      "name": "nirholas",
+      "email": "nichxbt@gmail.com"
+    },
+    "license": {
+      "name": "Apache-2.0",
+      "identifier": "Apache-2.0"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:4023"
+    }
+  ],
+  "paths": {
+    "/schedule": {
+      "get": {
+        "operationId": "getSchedule",
+        "summary": "Class calendar with live seat counts (free)",
+        "parameters": [
+          {
+            "name": "class",
+            "in": "query",
+            "description": "Template id, e.g. vinyasa-am",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "date",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "days",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Schedule",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Schedule"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/enroll/{classId}": {
+      "post": {
+        "operationId": "enroll",
+        "summary": "Enroll in a class session ($0.05 via x402)",
+        "description": "Assigns the lowest free seat and returns the ticket — seat number, class details, ICS invite and a signed QR pass — in the 200 body. Settlement only runs when enrollment succeeds.",
+        "parameters": [
+          {
+            "name": "classId",
+            "in": "path",
+            "required": true,
+            "description": "<templateId>@<YYYY-MM-DD>, e.g. vinyasa-am@2026-08-10",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-PAYMENT",
+            "in": "header",
+            "required": false,
+            "description": "Base64-encoded signed x402 payment for one of the rails in accepts[]. Omit to receive the 402 challenge.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enrollment artifact",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Enrollment"
+                }
+              }
+            },
+            "headers": {
+              "X-PAYMENT-RESPONSE": {
+                "description": "Base64 JSON settlement receipt: { success, transaction, network, payer }. Names the rail the payment settled on.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "402": {
+            "$ref": "#/components/responses/PaymentRequired"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          }
+        }
+      }
+    },
+    "/verify/{token}": {
+      "get": {
+        "operationId": "verifyPass",
+        "summary": "Validate a QR pass (free)",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Valid pass",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PassCheck"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Forged, altered, expired or unknown pass",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PassCheck"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/check-in/{token}": {
+      "post": {
+        "operationId": "checkIn",
+        "summary": "Validate and mark a pass as used (free, door staff)",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Checked in (or alreadyCheckedIn: true on a re-scan)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PassCheck"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid pass",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PassCheck"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/classes/{classId}": {
+      "get": {
+        "operationId": "getClass",
+        "summary": "One session with live seat counts (free)",
+        "parameters": [
+          {
+            "name": "classId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Session",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Session"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/roster/{classId}": {
+      "get": {
+        "operationId": "getRoster",
+        "summary": "Seats sold for a session (free)",
+        "parameters": [
+          {
+            "name": "classId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Roster",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/info": {
+      "get": {
+        "operationId": "info",
+        "summary": "Studio profile, pass policy, prices, payment rails (free)",
+        "responses": {
+          "200": {
+            "description": "Info",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "operationId": "health",
+        "summary": "Liveness (free)",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/.well-known/x402": {
+      "get": {
+        "operationId": "manifest",
+        "summary": "x402 discovery manifest (free)",
+        "responses": {
+          "200": {
+            "description": "Manifest",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "responses": {
+      "BadRequest": {
+        "description": "Invalid input",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "NotFound": {
+        "description": "Unknown class or session",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "Conflict": {
+        "description": "Class full / already started / enrollment closed",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "PaymentRequired": {
+        "description": "Payment required. `accepts` lists both rails (USDC on Base and USDC on Solana) — sign one and retry with X-PAYMENT.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/PaymentRequirements"
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "Error": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "example": "CLASS_FULL"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "Session": {
+        "type": "object",
+        "properties": {
+          "classId": {
+            "type": "string",
+            "example": "vinyasa-am@2026-08-10"
+          },
+          "templateId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "instructor": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "room": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "time": {
+            "type": "string",
+            "example": "07:00"
+          },
+          "endsAt": {
+            "type": "string",
+            "example": "08:00"
+          },
+          "durationMinutes": {
+            "type": "integer"
+          },
+          "capacity": {
+            "type": "integer"
+          },
+          "seatsTaken": {
+            "type": "integer"
+          },
+          "seatsLeft": {
+            "type": "integer"
+          },
+          "enrollmentOpen": {
+            "type": "boolean"
+          },
+          "startsAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Schedule": {
+        "type": "object",
+        "properties": {
+          "studio": {
+            "type": "object"
+          },
+          "passPolicy": {
+            "type": "object"
+          },
+          "enrollmentClosesMinutes": {
+            "type": "integer"
+          },
+          "generatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "classes": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "sessions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Session"
+            }
+          }
+        }
+      },
+      "Pass": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "description": "base64url(canonical payload) + '.' + hex HMAC-SHA256 — the ticket"
+          },
+          "verifyUrl": {
+            "type": "string",
+            "format": "uri"
+          },
+          "verifyEndpoint": {
+            "type": "string"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "qrSvgDataUri": {
+            "type": "string",
+            "description": "QR code of verifyUrl as an SVG data URI; embed directly in <img src>"
+          }
+        }
+      },
+      "Enrollment": {
+        "type": "object",
+        "description": "The purchased artifact, returned in the 200 body of POST /enroll/:classId.",
+        "properties": {
+          "passId": {
+            "type": "string"
+          },
+          "seatNumber": {
+            "type": "integer"
+          },
+          "classDetails": {
+            "type": "object"
+          },
+          "holder": {
+            "type": "object"
+          },
+          "seatsLeftAfter": {
+            "type": "integer"
+          },
+          "passPolicy": {
+            "type": "object"
+          },
+          "pass": {
+            "$ref": "#/components/schemas/Pass"
+          },
+          "ics": {
+            "type": "string",
+            "description": "base64-encoded RFC 5545 calendar invite"
+          },
+          "issuedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "signature": {
+            "type": "string"
+          }
+        }
+      },
+      "PassCheck": {
+        "type": "object",
+        "properties": {
+          "valid": {
+            "type": "boolean"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "payload": {
+            "type": "object"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "valid",
+              "checked-in"
+            ]
+          },
+          "checkedInAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "alreadyCheckedIn": {
+            "type": "boolean"
+          },
+          "session": {
+            "$ref": "#/components/schemas/Session"
+          },
+          "checkedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "PaymentRequirements": {
+        "type": "object",
+        "description": "x402 payment requirements returned with HTTP 402. `accepts` always carries BOTH rails — USDC on Base (EVM) and USDC on Solana. Pick one, sign it, retry with the X-PAYMENT header.",
+        "required": [
+          "x402Version",
+          "accepts"
+        ],
+        "properties": {
+          "x402Version": {
+            "type": "integer",
+            "example": 1
+          },
+          "error": {
+            "type": "string",
+            "example": "X-PAYMENT header is required"
+          },
+          "accepts": {
+            "type": "array",
+            "description": "One entry per accepted payment rail.",
+            "items": {
+              "$ref": "#/components/schemas/PaymentRail"
+            }
+          }
+        },
+        "example": {
+          "x402Version": 1,
+          "error": "X-PAYMENT header is required",
+          "accepts": [
+            {
+              "scheme": "exact",
+              "network": "base-sepolia",
+              "maxAmountRequired": "50000",
+              "resource": "https://YOUR-DEPLOYMENT.example.com/enroll/vinyasa-am@2026-08-10",
+              "description": "Enroll in one class session. Returns the seat number, full class details, a base64 ICS calendar invite and a signed QR pass usable at the door",
+              "mimeType": "application/json",
+              "payTo": "0x40252CFDF8B20Ed757D61ff157719F33Ec332402",
+              "maxTimeoutSeconds": 300,
+              "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+              "extra": {
+                "name": "USDC",
+                "version": "2"
+              }
+            },
+            {
+              "scheme": "exact",
+              "network": "solana",
+              "maxAmountRequired": "50000",
+              "resource": "https://YOUR-DEPLOYMENT.example.com/enroll/vinyasa-am@2026-08-10",
+              "description": "Enroll in one class session. Returns the seat number, full class details, a base64 ICS calendar invite and a signed QR pass usable at the door",
+              "mimeType": "application/json",
+              "payTo": "WwwuGbqHrwF5RG89KhUbmRWEvjnRH9k5kVM5p7T3WwW",
+              "maxTimeoutSeconds": 300,
+              "asset": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+              "extra": {
+                "rpcUrl": "https://api.mainnet-beta.solana.com"
+              }
+            }
+          ]
+        }
+      },
+      "PaymentRail": {
+        "type": "object",
+        "description": "A single accepted payment rail.",
+        "required": [
+          "scheme",
+          "network",
+          "maxAmountRequired",
+          "resource",
+          "payTo",
+          "asset"
+        ],
+        "properties": {
+          "scheme": {
+            "type": "string",
+            "enum": [
+              "exact"
+            ]
+          },
+          "network": {
+            "type": "string",
+            "enum": [
+              "base-sepolia",
+              "base",
+              "solana",
+              "solana-devnet"
+            ],
+            "description": "`base*` = EVM rail (EIP-3009), `solana*` = SVM rail (SPL transferChecked)."
+          },
+          "maxAmountRequired": {
+            "type": "string",
+            "description": "Atomic USDC units (6 decimals)."
+          },
+          "resource": {
+            "type": "string",
+            "format": "uri"
+          },
+          "description": {
+            "type": "string"
+          },
+          "mimeType": {
+            "type": "string"
+          },
+          "payTo": {
+            "type": "string",
+            "description": "Merchant receive address on that network."
+          },
+          "maxTimeoutSeconds": {
+            "type": "integer"
+          },
+          "asset": {
+            "type": "string",
+            "description": "USDC contract address / SPL mint."
+          },
+          "outputSchema": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "extra": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "EVM: EIP-712 domain. Solana: `rpcUrl` for building the transfer."
+          }
+        }
+      }
+    }
+  }
+}

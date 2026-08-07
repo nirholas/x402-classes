@@ -1,0 +1,61 @@
+{
+  "studio": {
+    "name": "Studio 402",
+    "description": "Demo studio — edit config/classes.json to describe your real timetable.",
+    "timezone": "America/New_York",
+    "address": "402 Payment Ave, Studio 2, New York, NY 10001",
+    "phone": "+1 (555) 402-0402"
+  },
+  "scheduleWindowDays": 14,
+  "enrollmentClosesMinutes": 15,
+  "classes": [
+    {
+      "id": "vinyasa-am",
+      "name": "Morning Vinyasa",
+      "instructor": "Ada Iyengar",
+      "description": "60 minutes of breath-led flow. All levels; mats provided.",
+      "days": ["monday", "wednesday", "friday"],
+      "time": "07:00",
+      "durationMinutes": 60,
+      "capacity": 18,
+      "room": "Studio A"
+    },
+    {
+      "id": "strength-pm",
+      "name": "Strength & Conditioning",
+      "instructor": "Grace Kettle",
+      "description": "Barbell and kettlebell circuits. Bring shoes you can lift in.",
+      "days": ["tuesday", "thursday"],
+      "time": "18:30",
+      "durationMinutes": 45,
+      "capacity": 12,
+      "room": "Studio B"
+    },
+    {
+      "id": "ceramics-workshop",
+      "name": "Wheel-Throwing Workshop",
+      "instructor": "Bernard Palissy",
+      "description": "Three-hour beginner workshop. Clay, tools and firing included.",
+      "days": ["saturday"],
+      "time": "10:00",
+      "durationMinutes": 180,
+      "capacity": 8,
+      "room": "Kiln Room"
+    },
+    {
+      "id": "restorative-pm",
+      "name": "Restorative Evening",
+      "instructor": "Ada Iyengar",
+      "description": "Slow, prop-supported holds. Ends with a long savasana.",
+      "days": ["sunday", "wednesday"],
+      "time": "19:30",
+      "durationMinutes": 75,
+      "capacity": 20,
+      "room": "Studio A"
+    }
+  ],
+  "passPolicy": {
+    "seatPrice": "$0.05",
+    "description": "A seat is paid per class, non-refundable once the pass is issued. The signed QR pass is your entry — show it at the door. Passes expire when the class ends."
+  }
+}
