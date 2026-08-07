@@ -11,6 +11,7 @@ import {
   railSummary,
   type RouteMap,
 } from "./payments.js";
+import { ROUTE_SCHEMAS } from "./schemas.js";
 import {
   ClassError,
   checkIn,
@@ -35,26 +36,8 @@ const routes: RouteMap = {
     price: PRICES.enroll,
     description:
       "Enroll in one class session. Returns the seat number, full class details, a base64 ICS calendar invite and a signed QR pass usable at the door",
-    outputSchema: {
-      type: "object",
-      properties: {
-        passId: { type: "string" },
-        seatNumber: { type: "integer" },
-        classDetails: { type: "object" },
-        seatsLeftAfter: { type: "integer" },
-        pass: {
-          type: "object",
-          properties: {
-            token: { type: "string" },
-            verifyUrl: { type: "string" },
-            expiresAt: { type: "string" },
-            qrSvgDataUri: { type: "string", description: "QR code as an SVG data URI" },
-          },
-        },
-        ics: { type: "string", description: "base64-encoded RFC 5545 calendar invite" },
-        signature: { type: "string" },
-      },
-    },
+    // Request/response schemas mirror openapi.json — see src/schemas.ts.
+    ...ROUTE_SCHEMAS["POST /enroll/:classId"],
   },
 };
 

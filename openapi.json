@@ -64,7 +64,8 @@
           "404": {
             "$ref": "#/components/responses/NotFound"
           }
-        }
+        },
+        "security": []
       }
     },
     "/enroll/{classId}": {
@@ -195,7 +196,8 @@
               }
             }
           }
-        }
+        },
+        "security": []
       }
     },
     "/check-in/{token}": {
@@ -233,7 +235,8 @@
               }
             }
           }
-        }
+        },
+        "security": []
       }
     },
     "/classes/{classId}": {
@@ -264,7 +267,8 @@
           "404": {
             "$ref": "#/components/responses/NotFound"
           }
-        }
+        },
+        "security": []
       }
     },
     "/roster/{classId}": {
@@ -295,7 +299,8 @@
           "404": {
             "$ref": "#/components/responses/NotFound"
           }
-        }
+        },
+        "security": []
       }
     },
     "/info": {
@@ -313,7 +318,8 @@
               }
             }
           }
-        }
+        },
+        "security": []
       }
     },
     "/health": {
@@ -331,7 +337,8 @@
               }
             }
           }
-        }
+        },
+        "security": []
       }
     },
     "/.well-known/x402": {
@@ -349,7 +356,8 @@
               }
             }
           }
-        }
+        },
+        "security": []
       }
     }
   },
