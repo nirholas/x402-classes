@@ -185,3 +185,7 @@ Questions, integration help, or a bug report: **nichxbt@gmail.com** — or open 
 ## License
 
 [Apache-2.0](LICENSE)
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=nirholas/x402-classes&type=Date)](https://www.star-history.com/#nirholas/x402-classes&Date)
