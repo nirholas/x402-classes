@@ -189,3 +189,26 @@ Questions, integration help, or a bug report: **nichxbt@gmail.com** — or open 
 ## Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=nirholas/x402-classes&type=Date)](https://www.star-history.com/#nirholas/x402-classes&Date)
+
+<!-- three.ws:growth -->
+## Support the project
+
+If x402-classes saves you time, **[star it on GitHub](https://github.com/nirholas/x402-classes)**. Stars are how other developers and AI agents find the repositories worth trusting, and they cost you one click.
+
+Know someone who would use it? [Post on X](https://twitter.com/intent/tweet?text=x402-classes%3A%20Class%20and%20session%20booking%20server%3A%20fitness%20studios%20and%20workshop%20hosts%20sell%20seats%20per-class%20via%20x402&url=https%3A%2F%2Fgithub.com%2Fnirholas%2Fx402-classes) · [Share on Bluesky](https://bsky.app/intent/compose?text=x402-classes%3A%20Class%20and%20session%20booking%20server%3A%20fitness%20studios%20and%20workshop%20hosts%20sell%20seats%20per-class%20via%20x402%20https%3A%2F%2Fgithub.com%2Fnirholas%2Fx402-classes) · [Share on LinkedIn](https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fgithub.com%2Fnirholas%2Fx402-classes) · [Submit to Hacker News](https://news.ycombinator.com/submitlink?u=https%3A%2F%2Fgithub.com%2Fnirholas%2Fx402-classes&t=x402-classes%3A%20Class%20and%20session%20booking%20server%3A%20fitness%20studios%20and%20workshop%20hosts%20sell%20seats%20per-class%20via%20x402) · [Share on Reddit](https://www.reddit.com/submit?url=https%3A%2F%2Fgithub.com%2Fnirholas%2Fx402-classes&title=x402-classes%3A%20Class%20and%20session%20booking%20server%3A%20fitness%20studios%20and%20workshop%20hosts%20sell%20seats%20per-class%20via%20x402)
+
+## Built for AI agents too
+
+Coding agents and LLM tooling can read this repo directly: [AGENTS.md](./AGENTS.md), [llms.txt](./llms.txt), [llms-full.txt](./llms-full.txt). Point an agent at `https://github.com/nirholas/x402-classes` and it has the context it needs.
+
+## More from the same author
+
+- [All repositories by nirholas](https://github.com/nirholas/nirholas#readme): the full catalog, grouped by topic
+- [three.ws](https://three.ws): the platform for 3D AI agents with Solana wallets, a skill marketplace and x402 payments
+- Questions or ideas: [open an issue](https://github.com/nirholas/x402-classes/issues) or [start a discussion](https://github.com/nirholas/x402-classes/discussions)
+
+## Contributors
+
+[![Contributors](https://contrib.rocks/image?repo=nirholas/x402-classes)](https://github.com/nirholas/x402-classes/graphs/contributors)
+
+<!-- /three.ws:growth -->

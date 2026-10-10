@@ -1,0 +1,28 @@
+# x402-classes
+
+> Class and session booking server: fitness studios and workshop hosts sell seats per-class via x402
+
+x402-classes is an open-source repository by nirholas, part of the three.ws ecosystem.
+
+## Docs
+
+- [README](https://github.com/nirholas/x402-classes/blob/HEAD/README.md): install, usage and reference
+- [Why x402 for this](https://github.com/nirholas/x402-classes/blob/HEAD/README.md#why-x402-for-this)
+- [Quickstart](https://github.com/nirholas/x402-classes/blob/HEAD/README.md#quickstart)
+- [API](https://github.com/nirholas/x402-classes/blob/HEAD/README.md#api)
+- [How x402 works](https://github.com/nirholas/x402-classes/blob/HEAD/README.md#how-x402-works)
+- [The QR pass](https://github.com/nirholas/x402-classes/blob/HEAD/README.md#the-qr-pass)
+- [Real backend / configuration](https://github.com/nirholas/x402-classes/blob/HEAD/README.md#real-backend-configuration)
+- [Human checkout](https://github.com/nirholas/x402-classes/blob/HEAD/README.md#human-checkout)
+- [For AI agents](https://github.com/nirholas/x402-classes/blob/HEAD/README.md#for-ai-agents)
+- [AGENTS.md](https://github.com/nirholas/x402-classes/blob/HEAD/AGENTS.md): guidance for coding agents
+- [Full text for LLMs](https://github.com/nirholas/x402-classes/blob/HEAD/llms-full.txt): the README inlined
+
+## Project
+
+- [Source](https://github.com/nirholas/x402-classes)
+- [Issues](https://github.com/nirholas/x402-classes/issues)
+- [Discussions](https://github.com/nirholas/x402-classes/discussions)
+- [Homepage](https://nirholas.github.io/x402-classes/)
+- [three.ws](https://three.ws): the platform this is part of
+- [All repositories by nirholas](https://github.com/nirholas/nirholas#readme)
