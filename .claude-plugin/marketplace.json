@@ -1,0 +1,22 @@
+{
+  "name": "x402-classes",
+  "owner": {
+    "name": "nirholas"
+  },
+  "description": "Self-hosted class and session booking server that sells seats with signed QR passes over x402.",
+  "plugins": [
+    {
+      "name": "x402-classes",
+      "source": "./plugins/x402-classes",
+      "description": "Self-hosted class and session booking server that sells seats with signed QR passes over x402.",
+      "category": "automation",
+      "tags": [
+        "x402",
+        "booking",
+        "classes",
+        "tickets",
+        "agents"
+      ]
+    }
+  ]
+}
